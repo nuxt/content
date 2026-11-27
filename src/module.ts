@@ -1,6 +1,6 @@
 import { comarkContent, contentHub, generateSourceTypes, isParsedSource, readArtifact } from 'comark-content'
 import defu from 'defu'
-import type { CacheArtifact, ContentSource, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
+import type { CacheArtifact, ContentSource, JsonSchema, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
 import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, resolvePath, useLogger } from '@nuxt/kit'
 import { mkdir, writeFile } from 'node:fs/promises'
 import type { Nuxt } from 'nuxt/schema'
@@ -86,7 +86,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Point the entries' imports at the runtime: the package exports target `dist/runtime/*.js`, which a stubbed build doesn't emit.
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
-      '@nuxt/content/content': resolve('./runtime/server/content'),
+      '@nuxt/content/server': resolve('./runtime/server/content'),
+      '@nuxt/content/v3/server': resolve('./runtime/v3/composables.server'),
     })
     nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
     nuxt.options.alias['@nuxt/content/worker'] = resolve('./runtime/client-content/worker')
@@ -112,11 +113,19 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Server
      */
-    const content = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks, !!(appContentPath || workerPath))
+    const { content, live } = await setupContent(serverContentPath, nuxt, options, contentCollections, highlight, toc, anchorLinks, !!(appContentPath || workerPath))
+    // Hybrid mode and `app/content.ts` read the build snapshot, which a live server moves past.
+    if (live && (options.mode === 'hybrid' || appContentPath)) {
+      throw new Error(options.mode === 'hybrid'
+        ? 'A `live` content needs `content.mode: \'server-only\'`: in hybrid mode, the browser reads the snapshot written at build.'
+        : 'A `live` content can\'t be used with `app/content.ts`: its browser instance reads the snapshot written at build.')
+    }
     // A build reads every document once, shared by the types and components templates.
-    const readContent = content && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
+    // Skip a live content: its documents are only known at runtime.
+    const readContent = content && !live && !nuxt.options.dev && !nuxt.options._prepare ? createContentReader(content) : undefined
 
     addServerImports({ name: 'content', from: serverContentPath })
+    addServerImports(['resolveContent', 'revalidateContent'].map(name => ({ name, from: resolve('./runtime/server/live') })))
     addServerHandler({ route: '/__nuxt_content/**', handler: { nuxt: resolve('./runtime/server/internal/api' + (nuxt.options.dev ? '.dev' : '')) } })
 
     /**
@@ -218,7 +227,7 @@ export default defineNuxtModule<ModuleOptions>({
     /**
      * Types
      */
-    setupTypes(content, nuxt, contentCollections, readContent, options.compatibilityVersion === 3)
+    setupTypes(content, nuxt, contentCollections, readContent, options.compatibilityVersion === 3, live)
 
     /**
      * Media, skipped in prepare
@@ -307,7 +316,7 @@ function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt)
   }
 }
 
-async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean) {
+async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean, live: boolean) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
   const highlightTypes = addTypeTemplate({ filename: 'content/highlight.d.ts', getContents: highlightTypesTemplate })
 
@@ -327,7 +336,7 @@ async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, colle
     nitroTypeIncludes.push(
       addTypeTemplate({
         filename: 'content/types.d.ts',
-        getContents: () => generateContentTypes(content, collections, readContent, v3),
+        getContents: () => generateContentTypes(content, collections, readContent, v3, live),
       }).dst,
     )
   }
@@ -357,13 +366,19 @@ function withV3FieldTypes(hooks: AnyComarkContent['hooks']): AnyComarkContent['h
 /**
  * Generate the `ContentRegistry` augmentation.
  * An unreadable source, such as a layer's missing `content/`, falls back to its declared schema instead of dropping every type.
+ * A live content is typed from its declared schemas, so `nuxi prepare` needs no network.
  */
-async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean): Promise<string> {
+async function generateContentTypes(content: ContentSurface, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean, live: boolean): Promise<string> {
   const reads = await readContent?.()
   const instances = await Promise.all(resolveInstances(content).map(async (instance) => {
     let manifest: Manifest
     try {
-      if (reads) {
+      if (live) {
+        // No declared schema means no generated type.
+        const schema = (instance.getSource() as { schema?: JsonSchema } | undefined)?.schema
+        manifest = { sources: [instance.name], items: {}, time: 0, schemas: schema ? { [instance.name]: schema } : {} }
+      }
+      else if (reads) {
         manifest = (await reads.get(instance.name)!).manifest
       }
       else {
@@ -516,7 +531,10 @@ async function cloneSurface(
   })
 }
 
-async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions, anchorLinks: string[], publicSnapshots: boolean): Promise<ContentSurface | undefined> {
+// Marks a content created with a `live` option.
+const LIVE = Symbol.for('nuxt-content:live')
+
+async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOptions, collections: ResolvedContentCollections, highlight: ResolvedHighlightOptions | false, toc: ResolvedTocOptions, anchorLinks: string[], publicSnapshots: boolean): Promise<{ content: ContentSurface, live: boolean }> {
   const { resolve } = createResolver(import.meta.url)
 
   const imported = await importContent(nuxt.options.rootDir, contentPath, {
@@ -530,6 +548,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
   // A separate surface, so the dev plugins and `basePath` don't mutate the instance Nitro imports.
   // `createNuxtContent()` already installed the v3 plugins with a shared database.
   const alreadyHasV3 = Boolean(imported.content && 'query' in imported.content)
+  const live = LIVE in imported.content
   const content = await cloneSurface(imported.content, {
     basePath: '/__NCDEV__/__nuxt_content',
     plugins: alreadyHasV3 ? [] : v3ServerPlugins(options.compatibilityVersion === 3),
@@ -552,8 +571,20 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
         if (!route.route.startsWith('/__nuxt_content')) return
         // Server-only mode keeps them private, except the manifest and snapshots `app/content.ts` and `app/content.worker.ts` hydrate from.
         const browserArtifact = route.route === '/__nuxt_content/manifest.json' || route.route.startsWith('/__nuxt_content/snapshot/')
-        if (options.mode === 'server-only' && !(publicSnapshots && browserArtifact)) {
+        // A live content publishes none: they would stay at the build's commit.
+        if (options.mode === 'server-only' && !(publicSnapshots && browserArtifact && !live)) {
           route.skip = true
+        }
+
+        if (route.error) {
+          // Ship no snapshot for a live source the build couldn't read.
+          if (live) {
+            const name = route.route.match(/\/snapshot\/(.+)\.json$/)?.[1]
+            if (name) logger.warn(`Could not read \`${name}\` at the commit to serve, no snapshot is shipped for it: a cold start reads its source.`)
+            route.error = undefined
+            route.skip = true
+          }
+          return
         }
 
         await mkdir(dir, { recursive: true })
@@ -590,7 +621,7 @@ async function setupContent(contentPath: string, nuxt: Nuxt, options: ModuleOpti
     }
   }
 
-  return content
+  return { content, live }
 }
 
 function setupMedia(content: ContentWithMedia & MediaMethods, nuxt: Nuxt) {

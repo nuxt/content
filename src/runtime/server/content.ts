@@ -7,6 +7,10 @@ import headingLinks from 'comark/plugins/heading-links'
 import { v3ServerPlugins } from '../v3/content-plugins.server'
 import externalLinks from 'comark/plugins/external-links'
 import { highlight } from '#content/highlight'
+import { setupLive, type LiveOptions } from './live'
+
+export { lastCommit } from './commits'
+export { resolveContent, revalidateContent, type ContentRevalidation, type LiveOptions, type LiveRef } from './live'
 
 export type ContentInstance = AnyComarkContent
 // `ContentHub<any>`: a hub over a mutable instance array isn't assignable to the
@@ -27,6 +31,8 @@ interface NuxtContentOptions extends Omit<ContentOptions, 'source' | 'plugins'> 
    * @default 'default'
    */
   name?: string
+  /** Serve the content at a commit chosen at runtime. Needs `server-only` mode and sources with `withRef()`, such as `forge()`. */
+  live?: LiveOptions
 }
 
 function snapshotLoaders(name: string) {
@@ -72,7 +78,7 @@ function createInstance(
   options: NuxtContentOptions,
   sharedPlugins: ContentOptions['plugins'],
 ) {
-  const { mode: _mode, sources: _sources, source: _source, name: _name, plugins: _plugins, ...rest } = options
+  const { mode: _mode, sources: _sources, source: _source, name: _name, plugins: _plugins, live: _live, ...rest } = options
 
   return comarkContent(name, {
     ...rest,
@@ -115,6 +121,8 @@ function withDefaultPlugins(markdown: ContentOptions['markdown']): ContentOption
  * instances composed with `contentHub()`. Production cold starts hydrate from
  * the prerendered snapshot via `withSnapshot()`.
  */
+export function createNuxtContent(options: NuxtContentOptions & { sources: Record<string, ContentSource> }): ContentHub<any>
+export function createNuxtContent(options: NuxtContentOptions & { source: ContentSource, sources?: undefined }): ContentInstance
 export function createNuxtContent(options: NuxtContentOptions): ContentSurface {
   // One shared plugin set (and therefore one SQLite database) across every
   // instance so hub FTS ranks correctly.
@@ -124,12 +132,17 @@ export function createNuxtContent(options: NuxtContentOptions): ContentSurface {
     const instances = Object.entries(options.sources).map(([name, source]) =>
       createInstance(name, source, options, sharedPlugins),
     )
-    return contentHub(instances, { basePath: '/__nuxt_content' })
+    return withLive(contentHub(instances, { basePath: '/__nuxt_content' }), options)
   }
 
   if (!options.source) {
     throw new Error('createNuxtContent: pass `source` or `sources`.')
   }
 
-  return createInstance(options.name ?? 'default', options.source, options, sharedPlugins)
+  return withLive(createInstance(options.name ?? 'default', options.source, options, sharedPlugins), options)
+}
+
+function withLive(content: ContentSurface, { live, cache }: NuxtContentOptions): ContentSurface {
+  if (live) setupLive(content, live, { cache, loadManifest: name => snapshotLoaders(name).loadManifest() })
+  return content
 }
