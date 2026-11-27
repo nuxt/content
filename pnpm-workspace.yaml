@@ -40,3 +40,4 @@ minimumReleaseAgeExclude:
   - "@nuxt/devtools-kit@4.2.2"
   - "@nuxt/devtools@4.2.2"
   - "@nuxthub/core@0.10.13"
+  - vue-router@5.5.3
