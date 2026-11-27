@@ -123,6 +123,29 @@ describe('search in a web worker, on a static host', async () => {
     await page.close()
   })
 
+  it('loads each instance from its `basePath`, in a new worker when it changes', { timeout: 60_000 }, async () => {
+    const page = await browser.newPage()
+    await page.goto(url)
+    await page.locator('#status', { hasText: 'ready' }).waitFor({ timeout: 30_000 })
+
+    type Worker = { search: (q: string) => Promise<SearchResult[]>, instances: { value: string[] }, basePaths: { value: Record<string, string> } }
+    const search = (query: string) => page.evaluate(query => (window as unknown as { __worker: Worker }).__worker.search(query).then(results => results.map(result => result.id).sort()), query)
+    const snapshots = () => Promise.all(page.workers().map(worker => worker.evaluate(() => performance.getEntriesByType('resource').map(entry => new URL(entry.name).pathname).filter(path => path.endsWith('.json')))))
+
+    expect(await snapshots()).toEqual([['/__nuxt_content/snapshot/docs.json']])
+    expect(await search('quokka')).toEqual([])
+
+    await page.evaluate(() => (window as unknown as { __worker: Worker }).__worker.basePaths.value = { docs: '/commits/b' })
+    await expect.poll(() => search('quokka'), { timeout: 30_000 }).toEqual(['/docs/en/quokka#quokka'])
+    expect(await search('wombat')).toEqual([])
+    expect(await snapshots()).toEqual([['/commits/b/snapshot/docs.json']])
+
+    await page.evaluate(() => (window as unknown as { __worker: Worker }).__worker.instances.value = ['docs', 'blog'])
+    await expect.poll(() => search('platypus'), { timeout: 30_000 }).toEqual(['/blog/platypus#platypus'])
+    expect(await snapshots()).toEqual([['/commits/b/snapshot/docs.json', '/__nuxt_content/snapshot/blog.json']])
+    await page.close()
+  })
+
   it('starts a new worker after the previous one failed', { timeout: 60_000 }, async () => {
     const page = await browser.newPage()
     // The worker script fails to load once, as on a flaky network.

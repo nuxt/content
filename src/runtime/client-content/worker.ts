@@ -19,17 +19,24 @@ export function createNuxtContentWorker<T extends NuxtContentWorkerOptions>(opti
   return options
 }
 
+/** Base path of each instance's snapshot, by instance name. */
+export type NuxtContentWorkerBasePaths = Record<string, string | undefined>
+
 /**
  * Serve the instances of `app/content.worker.ts` to `useNuxtContentWorker()`, from the generated worker entry.
- * Each instance loads its prerendered snapshot on its first read, so only the instances read are downloaded.
+ * Each instance loads its snapshot on its first read, so only the instances read are downloaded.
  * @internal
  */
 export function startNuxtContentWorker(options: NuxtContentWorkerOptions, names: string[], baseURL: string) {
-  serveContentWorker(contentHub(
-    names.map(name => comarkContent(name, {
-      source: snapshot(`${baseURL.replace(/\/?$/, '/')}__nuxt_content/snapshot/${name}.json`),
-      plugins: options.plugins,
-    })),
-    { basePath: '/__nuxt_content' },
-  ))
+  const prerendered = `${baseURL.replace(/\/?$/, '/')}__nuxt_content`
+  // The first message carries the base paths.
+  globalThis.addEventListener('message', ({ data }: MessageEvent<{ basePaths?: NuxtContentWorkerBasePaths }>) => {
+    serveContentWorker(contentHub(
+      names.map(name => comarkContent(name, {
+        source: snapshot(`${(data.basePaths?.[name] ?? prerendered).replace(/\/+$/, '')}/snapshot/${name}.json`),
+        plugins: options.plugins,
+      })),
+      { basePath: '/__nuxt_content' },
+    ))
+  }, { once: true })
 }

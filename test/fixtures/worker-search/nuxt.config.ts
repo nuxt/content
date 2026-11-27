@@ -15,6 +15,8 @@ export default defineNuxtConfig({
   nitro: {
     // Only `.output/public`, served without a server.
     preset: 'static',
+    // Serves `docs` at another commit.
+    prerender: { routes: ['/commits/b/snapshot/docs.json'] },
     imports: { exclude: [/\/src\/runtime\//] },
   },
 })

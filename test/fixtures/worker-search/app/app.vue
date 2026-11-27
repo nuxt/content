@@ -2,7 +2,9 @@
 const { data: page } = await useAsyncData('install', () => content.get('/docs/en/install'))
 // As Docus does with the current locale's source.
 const instances = ref(['docs'])
-const { status, warmup, search, get } = useNuxtContentWorker({ instances })
+// Base path of each instance's snapshot, set by the tests.
+const basePaths = ref<Record<string, string>>({})
+const { status, warmup, search, get } = useNuxtContentWorker({ instances, basePath: source => basePaths.value[source] })
 
 // Every value `status` takes: `<UContentSearch>` searches again each time it turns `ready`.
 const statuses: string[] = []
@@ -11,7 +13,7 @@ watch(status, value => statuses.push(value))
 // Hydrate the worker once the page is idle, so the first query is answered from a ready index.
 onNuxtReady(warmup)
 onMounted(() => Object.assign(window, {
-  __worker: { search, get, instances, statuses },
+  __worker: { search, get, instances, statuses, basePaths },
   // Never called: Vite bundles it all the same.
   __otherWorker: () => new Worker(new URL('./other.worker.ts', import.meta.url), { type: 'module' }),
 }))
