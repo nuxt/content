@@ -8,17 +8,17 @@
   "dependencies": {
     "@libsql/client": "^0.18.0",
     "@nuxt/content": "link:..",
-    "@nuxthub/core": "^0.10.12",
+    "@nuxthub/core": "^0.10.13",
     "@nuxtjs/plausible": "^4.1.0",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.1.0",
-    "@vueuse/nuxt": "^15.0.0",
+    "@vercel/speed-insights": "^2.1.1",
+    "@vueuse/nuxt": "^15.1.0",
     "better-sqlite3": "^13.2.0",
-    "docus": "^5.15.0",
+    "docus": "^5.15.1",
     "drizzle-kit": "^0.31.11",
     "drizzle-orm": "^0.45.4",
     "minisearch": "^7.2.0",
-    "nuxt": "^4.6.4",
+    "nuxt": "^4.7.0",
     "nuxt-studio": "^1.8.2"
   }
 }

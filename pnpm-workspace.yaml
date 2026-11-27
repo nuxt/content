@@ -51,7 +51,7 @@ minimumReleaseAgeExclude:
   - wrangler@4.126.0 || 4.127.0 || 4.136.0 || 4.148.0 || 4.151.3 || 4.161.0 || 4.164.0
   - '@types/node@26.4.0'
   - happy-dom@20.11.9 || 20.11.10
-  - '@cloudflare/workers-types@5.20260827.1 || 5.20260921.1 || 5.20261007.1 || 5.20261113.1 || 5.20261117.1'
+  - "@cloudflare/workers-types@5.20260827.1 || 5.20260921.1 || 5.20261007.1 || 5.20261113.1 || 5.20261117.1 || 5.20261127.1"
   - '@cloudflare/workerd-darwin-64@1.20260921.1 || 1.20261117.1'
   - '@cloudflare/workerd-darwin-arm64@1.20260921.1 || 1.20261117.1'
   - '@cloudflare/workerd-linux-64@1.20260921.1 || 1.20261117.1'
@@ -63,3 +63,9 @@ minimumReleaseAgeExclude:
   - nuxt-studio@1.8.1
   - isomorphic-git@1.44.16
   - minimatch@11.0.9
+  - "@nuxt/devtools-assets@4.2.2"
+  - "@nuxt/devtools-kit@4.2.2"
+  - "@nuxt/devtools@4.2.2"
+  - "@nuxthub/core@0.10.13"
+  - "@vercel/speed-insights@2.1.1"
+  - vite@8.4.0
