@@ -25,7 +25,6 @@ import type {
   SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
-import type { SqliteFullTextSearchHubMethods } from 'comark-content/plugins/sqlite-full-text-search'
 import { content } from '#imports'
 
 type QueryableContent = (ComarkContent | ContentHub) & {
@@ -41,6 +40,10 @@ type SearchableContent = QueryableContent & {
   __fts__?: {
     searchAcross: (sources: string[], query: string, opts?: SearchOptions) => Promise<SearchResult[]>
   }
+}
+// The full-text-search plugin's hub method, which the default `ContentHub` type doesn't include.
+type HubSearch = {
+  search: (query: string, opts?: SearchOptions & { instances?: string[] }) => Promise<SearchResult[]>
 }
 type QueryBuilderFor<K extends keyof ContentRegistry> = SourceQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
 type FullQueryBuilderFor<K extends keyof ContentRegistry> = FullFileQueryBuilder<RegistryRow<K>, ContentListFile<SourceData<K>>>
@@ -132,7 +135,7 @@ export function useSearchCollection<T extends keyof ContentRegistry>(
     }
     // Hub search takes (query, { instances }).
     if ('from' in searchable && typeof (searchable as ContentHub).from === 'function') {
-      return (searchable as unknown as SqliteFullTextSearchHubMethods).search(query, { ...searchOpts, instances: collections })
+      return (searchable as unknown as HubSearch).search(query, { ...searchOpts, instances: collections })
     }
     // Single-instance search takes (query, opts) only.
     return searchable.search(query, searchOpts)
