@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import type { JsonSchema } from 'comark-content'
-import { createNuxtContent } from '@nuxt/content/content'
+import { createNuxtContent } from '@nuxt/content/server'
 import fs from 'comark-content/sources/fs'
 import json from 'comark-content/plugins/json'
 import yaml from 'comark-content/plugins/yaml'
