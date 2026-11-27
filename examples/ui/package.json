@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@nuxt/content": "workspace:*",
-    "@nuxt/ui": "^4.13.0",
+    "@nuxt/ui": "^4.13.1",
     "nuxt": "^4.7.0"
   }
 }
