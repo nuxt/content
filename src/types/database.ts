@@ -20,7 +20,10 @@ export interface LocalDevelopmentDatabase {
   insertDevelopmentCache(id: string, value: string, checksum: string): Promise<void>
   insertDevelopmentCacheBatch(entries: CacheEntry[]): Promise<void>
   deleteDevelopmentCache(id: string): Promise<void>
-  dropContentTables(): void
+  /**
+   * Drop the tables of `collections` and of the collections listed in `<prefix>info`, then the info table
+   */
+  dropContentTables(prefix: string, collections: string[]): Promise<void>
   exec(sql: string): void
   close(): void
   database?: Connector

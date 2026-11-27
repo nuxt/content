@@ -22,7 +22,7 @@ import htmlTags from '@nuxtjs/mdc/runtime/parser/utils/html-tags-list'
 import { kebabCase, pascalCase } from 'scule'
 import defu from 'defu'
 import { version } from '../package.json'
-import { generateCollectionInsert, generateCollectionTableDefinition } from './utils/collection'
+import { generateCollectionInsert, generateCollectionTableDefinition, resolvePruneUnusedPrefixes, resolveTablePrefix } from './utils/collection'
 import { componentsManifestTemplate, contentTypesTemplate, fullDatabaseRawDumpTemplate, manifestTemplate, moduleTemplates } from './utils/templates'
 import type { ResolvedCollection } from './types/collection'
 import type { ModuleOptions } from './types/module'
@@ -115,13 +115,15 @@ export default defineNuxtModule<ModuleOptions>({
       dump: {},
       components: [],
       collections: [],
+      tablePrefix: '',
     }
 
     // Detect installed validators and them into content context
     await initiateValidatorsContext()
 
-    const { collections } = await loadContentConfig(nuxt, options)
+    const { collections, tablePrefix } = await loadContentConfig(nuxt, options)
     manifest.collections = collections
+    manifest.tablePrefix = tablePrefix
 
     nuxt.options.vite.optimizeDeps = defu(nuxt.options.vite.optimizeDeps, {
       exclude: ['@sqlite.org/sqlite-wasm'],
@@ -265,6 +267,7 @@ export default defineNuxtModule<ModuleOptions>({
         database: options.database,
         localDatabase: options._localDatabase!,
         integrityCheck: true,
+        pruneUnusedPrefixes: resolvePruneUnusedPrefixes(options.pruneUnusedPrefixes),
       } as never
     })
 
@@ -332,7 +335,7 @@ async function processCollectionItems(nuxt: Nuxt, collections: ResolvedCollectio
   const usedComponents: Array<string> = []
 
   // Remove all existing content collections to start with a clean state
-  db.dropContentTables()
+  await db.dropContentTables(resolveTablePrefix(options.tablePrefix), collections.map(c => c.name))
   // Create database dump
   for await (const collection of collections) {
     if (collection.name === 'info') {

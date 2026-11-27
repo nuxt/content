@@ -3,6 +3,8 @@ export const tables = {
   info: '_content_info',
 }
 
+export const tablePrefix = '_content_'
+
 export const checksums: Record<string, string> = {}
 export const checksumsStructure: Record<string, string> = {}
 

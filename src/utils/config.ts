@@ -3,7 +3,7 @@ import { relative } from 'pathe'
 import { hasNuxtModule, useNuxt } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { DefinedCollection, ModuleOptions } from '../types'
-import { defineCollection, resolveCollections } from './collection'
+import { defineCollection, resolveCollections, resolveTablePrefix } from './collection'
 import { logger } from './dev'
 import { resolveStudioCollection } from './studio'
 
@@ -75,7 +75,8 @@ export async function loadContentConfig(nuxt: Nuxt, options?: ModuleOptions) {
     resolveStudioCollection(nuxt, finalCollectionsConfig)
   }
 
-  const collections = resolveCollections(finalCollectionsConfig)
+  const tablePrefix = resolveTablePrefix(options?.tablePrefix)
+  const collections = resolveCollections(finalCollectionsConfig, { tablePrefix })
 
-  return { collections }
+  return { collections, tablePrefix }
 }

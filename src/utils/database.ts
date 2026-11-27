@@ -167,11 +167,27 @@ export async function getLocalDatabase(database: SqliteDatabaseConfig | D1Databa
     }
   }
 
-  const dropContentTables = async () => {
-    const tables = await db.prepare('SELECT name FROM sqlite_master WHERE type = ? AND name LIKE ?')
-      .all('table', '_content_%') as { name: string }[]
-    for (const { name } of tables) {
-      db.exec(`DROP TABLE ${name}`)
+  const dropContentTables = async (prefix: string, collections: string[]) => {
+    // Match exact names, never `startsWith(prefix)`: another build sharing this database may use
+    // a longer prefix (`_preview_feat_` / `_preview_feat_x_`), and a prefix like `_` would match
+    // `_development_cache`. The info table lists the collections of the previous build, so tables
+    // of removed collections are dropped too.
+    const infoTable = `${prefix}info`
+    const previous = await db.prepare(`SELECT id FROM ${infoTable} WHERE id LIKE ?`).all('checksum_%')
+      .catch(() => []) as { id: string }[]
+    const names = new Set([
+      ...collections,
+      ...previous.map(({ id }) => String(id)).filter(id => id.startsWith('checksum_')).map(id => id.slice('checksum_'.length)),
+    ])
+    const tables = new Set((await db.prepare('SELECT name FROM sqlite_master WHERE type = ?').all('table') as { name: string }[]).map(t => t.name))
+
+    for (const name of [...names].map(name => `${prefix}${name}`).filter(t => t !== infoTable)) {
+      if (tables.has(name) && name !== '_development_cache' && /^\w+$/.test(name)) {
+        await db.exec(`DROP TABLE ${name}`)
+      }
+    }
+    if (tables.has(infoTable)) {
+      await db.exec(`DROP TABLE ${infoTable}`)
     }
   }
 
