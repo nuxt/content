@@ -1,5 +1,5 @@
 {
-  "name": "@nuxt/content4",
+  "name": "@nuxt/content",
   "version": "4.0.0",
   "description": "Write your content inside your Nuxt app",
   "homepage": "https://content.nuxt.com",
@@ -8,6 +8,7 @@
     "content",
     "nuxt-module",
     "markdown",
+    "comark",
     "mdc"
   ],
   "repository": {
@@ -52,22 +53,22 @@
     "verify": "npm run dev:prepare && npm run prepack && npm run lint && npm run test && npm run typecheck"
   },
   "dependencies": {
-    "@comark/vue": "^0.9.2",
+    "@comark/vue": "https://pkg.pr.new/@comark/vue@ff4661d",
     "@nuxt/kit": "^4.7.0",
     "@sqlite.org/sqlite-wasm": "3.54.1-build1",
-    "comark": "https://pkg.pr.new/comark@0b5d53f",
+    "comark": "https://pkg.pr.new/comark@ff4661d",
     "comark-content": "^0.6.2",
     "defu": "^6.1.7",
     "forges": "^0.3.2",
     "jiti": "^2.7.0"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^4.2.0",
+    "@nuxt/devtools": "^4.2.2",
     "@nuxt/eslint-config": "^1.17.0",
     "@nuxt/module-builder": "^1.0.4",
     "@nuxt/schema": "^4.7.0",
     "@nuxt/test-utils": "^4.4.0",
-    "@nuxt/ui": "^4.13.0",
+    "@nuxt/ui": "^4.13.1",
     "@types/node": "latest",
     "changelogen": "^0.6.2",
     "eslint": "^10.15.0",
@@ -75,7 +76,7 @@
     "playwright-core": "^1.65.1",
     "shiki": "^4.6.0",
     "typescript": "~6.0.3",
-    "vitest": "^5.1.1",
+    "vitest": "^5.1.2",
     "vue-tsc": "^3.3.14"
   },
   "peerDependencies": {

@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@nuxt/content": "workspace:*",
-    "@nuxt/ui": "^4.13.0",
-    "@nuxthub/core": "^0.10.12",
-    "@nuxtjs/i18n": "^10.6.0",
+    "@nuxt/ui": "^4.13.1",
+    "@nuxthub/core": "^0.10.13",
+    "@nuxtjs/i18n": "^10.7.0",
     "nuxt": "^4.7.0",
     "zod": "^4.6.7"
   }
