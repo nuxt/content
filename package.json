@@ -110,10 +110,10 @@
   "peerDependencies": {
     "@electric-sql/pglite": "*",
     "@libsql/client": "*",
-    "@valibot/to-json-schema": "^1.5.0",
+    "@valibot/to-json-schema": "^1.8.0",
     "better-sqlite3": "^12.5.0 || ^13.0.0",
     "sqlite3": "*",
-    "valibot": "^1.2.0"
+    "valibot": "^1.5.0"
   },
   "peerDependenciesMeta": {
     "@electric-sql/pglite": {
@@ -155,7 +155,7 @@
     "@valibot/to-json-schema": "^1.8.0",
     "@vue/test-utils": "^2.6.0",
     "csvtojson": "^2.0.14",
-    "eslint": "^10.15.0",
+    "eslint": "^10.16.0",
     "happy-dom": "^21.0.4",
     "mdclint": "^0.1.2",
     "micromark-util-types": "^2.0.3",
@@ -170,7 +170,7 @@
     "vitest": "^5.1.2",
     "vue-component-meta": "^3.3.14",
     "vue-tsc": "^3.3.14",
-    "wrangler": "^4.168.0"
+    "wrangler": "^4.169.0"
   },
   "resolutions": {
     "@nuxt/content": "workspace:*"
