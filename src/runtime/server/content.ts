@@ -37,9 +37,9 @@ function snapshotLoaders(name: string) {
   // the handler can produce them.
   // `useStorage` is imported explicitly, since Nitro doesn't auto-import in an installed module,
   // and dynamically, since this file is also loaded in the module process, without Nitro's runtime.
-  // Not from `#imports`: imported dynamically, Rollup warns about its unused auto-imports of external modules.
+  // `#content/storage` is the host Nitro's own: `#imports` or `nitropack` would put Nuxt 5's Nitro v2 compatibility layer on this file.
   const storage = async () => {
-    const { useStorage } = await import('nitropack/runtime')
+    const { useStorage } = await import('#content/storage')
     return useStorage('assets:content')
   }
   return {

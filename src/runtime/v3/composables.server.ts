@@ -23,7 +23,8 @@ import {
   type SourceQueryBuilder,
 } from 'comark-content/database/utils/query'
 import type { SqlQueryMethods } from 'comark-content/plugins/sql-query'
-import { content } from '#imports'
+// Not `#imports`: with only type imports of `nuxt/server`, Nuxt 5 would apply its Nitro v2 compatibility layer to this file.
+import { content } from '#content/server'
 
 /**
  * The event is unused, so accept both the portable `nuxt/server` event and the

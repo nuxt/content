@@ -1,0 +1,9 @@
+# Its own workspace, so `pnpm install --dir test/fixtures/nuxt5` keeps Nuxt 5 out of the root lockfile.
+packages: []
+minimumReleaseAgeExclude:
+  - '@nuxt/kit-nightly@5.0.0-2611271344-0b7a0bd'
+  - '@nuxt/nitro-server-nightly@5.0.0-2611271344-0b7a0bd'
+  - '@nuxt/schema-nightly@5.0.0-2611271344-0b7a0bd'
+  - '@nuxt/vite-builder-nightly@5.0.0-2611271344-0b7a0bd'
+  - '@nuxt/vite-server-nightly@5.0.0-2611271344-0b7a0bd'
+  - nuxt-nightly@5.0.0-2611271344-0b7a0bd

@@ -1,0 +1,4 @@
+# Its own workspace, so `pnpm install --dir test/fixtures/nuxt4-nitro3` keeps Nitro 3 out of the root lockfile.
+packages: []
+allowBuilds:
+  esbuild: false
