@@ -1,13 +1,13 @@
 import { comarkContent, contentHub, generateSourceTypes, isParsedSource, readArtifact } from 'comark-content'
 import defu from 'defu'
 import type { CacheArtifact, ContentSource, Manifest, AnyComarkContent, ContentHub, ParsedSnapshot, TypegenFieldContext } from 'comark-content'
-import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, useLogger } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addServerImports, addServerHandler, addImports, addComponent, addPlugin, addTemplate, addPrerenderRoutes, addDevServerHandler, addTypeTemplate, addServerTemplate, getNitroVersion, resolveServerVariant, useLogger } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import type { Nuxt } from 'nuxt/schema'
 import type { MediaMethods } from 'comark-content/plugins/media'
 import { importContent, resolveContentEntry } from './utils/config'
-import { highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
+import { aliasTypesTemplate, highlightTypesTemplate, importMetaTypesTemplate } from './utils/templates'
 import { highlightStylesTemplate, highlightTemplate, resolveHighlightOptions, type ResolvedHighlightOptions } from './utils/highlight'
 import { resolveTocOptions, type ResolvedTocOptions } from './utils/toc'
 import { setupAnchorLinks } from './utils/anchor-links'
@@ -85,6 +85,12 @@ export default defineNuxtModule<ModuleOptions>({
     // Point the entries' imports at the runtime: the package exports target `dist/runtime/*.js`, which a stubbed build doesn't emit.
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
       '@nuxt/content/content': resolve('./runtime/server/content'),
+      '#content/server': serverContentPath,
+      // Kit picks the Nitro 3 file on Nuxt 5, so Nuxt doesn't apply its Nitro v2 compatibility layer to the module.
+      '#content/storage': resolveServerVariant({
+        nitro3: resolve('./runtime/server/internal/storage'),
+        nitro2: resolve('./runtime/server/internal/storage.legacy'),
+      }),
     })
     nuxt.options.alias['@nuxt/content/app'] = resolve('./runtime/client-content/app')
 
@@ -97,10 +103,13 @@ export default defineNuxtModule<ModuleOptions>({
       'import.meta.content.anchorLinks': JSON.stringify(anchorLinks),
     })
 
-    // The client runtime uses top-level `await`, which Nitro's default `es2019` rejects in chunks outside `node_modules`.
-    nuxt.options.nitro.esbuild = defu(nuxt.options.nitro.esbuild, {
-      options: { target: 'es2022' },
-    })
+    // The client runtime uses top-level `await`, which Nitro 2's default `es2019` rejects in chunks outside `node_modules`.
+    // Nitro 3 targets `esnext` and ignores `esbuild`.
+    if (getNitroVersion(nuxt) !== 3) {
+      nuxt.options.nitro.esbuild = defu(nuxt.options.nitro.esbuild, {
+        options: { target: 'es2022' },
+      })
+    }
 
     nuxt.options.vite.define = defu(nuxt.options.vite.define, {
       'import.meta.content.compatibilityVersion': JSON.stringify(options.compatibilityVersion),
@@ -239,14 +248,16 @@ function setupHighlight(highlight: ResolvedHighlightOptions | false, nuxt: Nuxt)
 async function setupTypes(content: ContentSurface | undefined, nuxt: Nuxt, collections: ResolvedContentCollections, readContent: ContentReader | undefined, v3: boolean) {
   const importMetaTypes = addTypeTemplate({ filename: 'content/import-meta.d.ts', getContents: importMetaTypesTemplate })
   const highlightTypes = addTypeTemplate({ filename: 'content/highlight.d.ts', getContents: highlightTypesTemplate })
+  const aliasTypes = addTypeTemplate({ filename: 'content/aliases.d.ts', getContents: aliasTypesTemplate })
 
   const nitroTypeIncludes = [
     importMetaTypes.dst,
     highlightTypes.dst,
+    aliasTypes.dst,
   ]
 
   nuxt.options.typescript = defu(nuxt.options.typescript, {
-    tsConfig: { include: [importMetaTypes.dst, highlightTypes.dst] },
+    tsConfig: { include: [importMetaTypes.dst, highlightTypes.dst, aliasTypes.dst] },
   })
   // The types augment `comark-content`, which the project can't resolve on its own with pnpm.
   nuxt.options.typescript.hoist ||= []
@@ -546,6 +557,8 @@ function setupMedia(content: ContentWithMedia & MediaMethods, nuxt: Nuxt) {
   }
   else {
     addServerHandler({
+      // Nitro 3 matches a middleware route exactly, and Nuxt 4 warns (NUXT_B9002) about one without a route; Nitro 2 reads `route` as a prefix.
+      route: getNitroVersion(nuxt) === 3 ? '/**' : undefined,
       handler: { nuxt: resolve('./runtime/server/internal/assets-middleware') },
       middleware: true,
       env: ['dev', 'prerender', 'nitro-prerender'],

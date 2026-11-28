@@ -37,6 +37,8 @@ jobs:
       - run: pnpm typecheck
       # The hybrid example tests navigate in a real browser (`@nuxt/test-utils` + playwright-core).
       - run: pnpm exec playwright-core install --only-shell chromium
+      # The Nitro 3 fixtures (Nuxt 5 nightly, and Nuxt 4 on Nitro 3) have their own lockfiles.
+      - run: pnpm install --dir test/fixtures/nuxt5 && pnpm install --dir test/fixtures/nuxt4-nitro3
       # Each example test boots a full Nuxt app. On the GitHub runner Node 24
       # caps the V8 heap near 2GB (it reads the cgroup memory limit), so the
       # heavier ones (ui, i18n) die with "Ineffective mark-compacts near heap

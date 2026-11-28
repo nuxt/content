@@ -5,6 +5,18 @@ export function highlightTypesTemplate() {
 `
 }
 
+/** Fallback types of the module's Nitro aliases, for the app tsconfig, which doesn't map them to their files. */
+export function aliasTypesTemplate() {
+  return `declare module '#content/server' {
+  export const content: unknown
+}
+
+declare module '#content/storage' {
+  export function useStorage(base: string): { getItem: (key: string) => Promise<unknown> }
+}
+`
+}
+
 export function importMetaTypesTemplate() {
   return `declare global {
 interface ImportMeta {
